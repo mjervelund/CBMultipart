@@ -4,7 +4,7 @@ import codechicken.multipart.api.RegisterMultipartRenderersEvent;
 import codechicken.multipart.api.part.MultiPart;
 import codechicken.multipart.util.PartRayTraceResult;
 import net.minecraft.client.Camera;
-import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.extract.LevelExtractor;
 import net.minecraft.client.renderer.state.level.LevelRenderState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -27,12 +27,12 @@ public interface OutlinePartRenderer<T extends MultiPart> {
      *
      * @param part             The {@link MultiPart} being rendered.
      * @param hit              The {@link PartRayTraceResult}.
-     * @param levelRenderer    The {@link LevelRenderer}.
+     * @param levelExtractor   The {@link LevelExtractor}.
      * @param levelRenderState The {@link LevelRenderState}.
      * @param camera           The {@link Camera} camera info.
      * @param collisionCtx     The {@link CollisionContext}.
      * @param cons             Consumer to add {@link CustomBlockOutlineRenderer}s.
      * @return If any custom rendering was applied. <code>false</code> for default {@link VoxelShape} based rendering.
      */
-    boolean extractPartOutline(T part, PartRayTraceResult hit, LevelRenderer levelRenderer, LevelRenderState levelRenderState, Camera camera, CollisionContext collisionCtx, boolean isInTranslucentPass, boolean isHighContrast, Consumer<CustomBlockOutlineRenderer> cons);
+    boolean extractPartOutline(T part, PartRayTraceResult hit, LevelExtractor levelExtractor, LevelRenderState levelRenderState, Camera camera, CollisionContext collisionCtx, boolean isInTranslucentPass, boolean isHighContrast, Consumer<CustomBlockOutlineRenderer> cons);
 }

@@ -86,7 +86,7 @@ public class DataGenerators {
 
         @Override
         protected void registerRecipes() {
-            special(Identifier.fromNamespaceAndPath(MOD_ID, "microblock"), MicroRecipe::new);
+            special(Identifier.fromNamespaceAndPath(MOD_ID, "microblock"), () -> MicroRecipe.INSTANCE);
 
             shapedRecipe(STONE_ROD_ITEM.get())
                     .key('S', Tags.Items.COBBLESTONES)

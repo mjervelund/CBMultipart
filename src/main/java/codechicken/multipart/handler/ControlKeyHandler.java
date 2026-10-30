@@ -9,7 +9,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import org.lwjgl.glfw.GLFW;
+import com.mojang.blaze3d.platform.InputConstants;
 
 /**
  * Created by covers1624 on 1/9/20.
@@ -17,7 +17,7 @@ import org.lwjgl.glfw.GLFW;
 public class ControlKeyHandler {
 
     private static final CrashLock LOCK = new CrashLock("Already initialized.");
-    private static final KeyMapping KEY = new KeyMapping("key.control", GLFW.GLFW_KEY_LEFT_CONTROL, KeyMapping.Category.GAMEPLAY);
+    private static final KeyMapping KEY = new KeyMapping("key.control", InputConstants.KEY_LCONTROL, KeyMapping.Category.GAMEPLAY);
 
     private static boolean lastPressed = false;
 

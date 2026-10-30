@@ -10,6 +10,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.neoforged.neoforge.model.data.ModelData;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,11 +30,13 @@ public class BlockStatePartBakedModelRenderer<T extends BlockStateModelPart> imp
         var model = Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(state);
         // TODO we can likely cache the list used for this collectParts call somewhere if we use an instance class?
         // TODO we need to rewrite tint...
-        var modelParts = model.collectParts(
+        List<net.minecraft.client.renderer.block.dispatch.BlockStateModelPart> modelParts = new ArrayList<>();
+        model.collectParts(
                 new ProxyBlockAndTintGetter(level, pos, state, modelData),
                 pos,
                 state,
-                rand
+                rand,
+                modelParts
         );
         for (var modelPart : modelParts) {
             parts.add(new WrappedBlockModelPart(modelPart, state));

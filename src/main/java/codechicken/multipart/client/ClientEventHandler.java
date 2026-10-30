@@ -35,7 +35,7 @@ public class ClientEventHandler {
             boolean rendererHandled = renderer.extractPartOutline(
                     unsafeCast(hit.part),
                     hit,
-                    event.getLevelRenderer(),
+                    event.getLevelExtractor(),
                     event.getLevelRenderState(),
                     event.getCamera(),
                     event.getCollisionContext(),

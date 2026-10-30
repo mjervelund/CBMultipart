@@ -7,22 +7,24 @@ import codechicken.microblock.item.MicroMaterialComponent;
 import codechicken.multipart.init.CBMultipartModContent;
 import codechicken.multipart.util.Sides;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.QuadInstance;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
-import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.client.RenderTypeHelper;
 import org.joml.Vector3fc;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -48,7 +50,7 @@ public class MicroblockItemRenderer implements SpecialModelRenderer<MicroMateria
     }
 
     @Override
-    public void submit(@Nullable MicroMaterialComponent component, ItemDisplayContext displayContext, PoseStack poseStack, SubmitNodeCollector collector, int packedLight, int packedOverlay, boolean hasFoil, int outlineColor) {
+    public void submit(@Nullable MicroMaterialComponent component, PoseStack poseStack, SubmitNodeCollector collector, int packedLight, int packedOverlay, boolean hasFoil, int outlineColor) {
         if (component == null || component.factory() == null) return;
 
         var clientMaterial = MicroMaterialClient.get(component.material());
@@ -67,51 +69,54 @@ public class MicroblockItemRenderer implements SpecialModelRenderer<MicroMateria
         var cuboids = part.getRenderCuboids(true);
         List<BlockStateModelPart> list = new ArrayList<>();
         clientMaterial.collectParts(null, null, cuboids, list);
+        // Each quad carries the item render type of its own material.
+        Map<RenderType, List<BakedQuad>> quadsByType = new LinkedHashMap<>();
         for (var modelPart : list) {
-            // The state used for getRenderType here is not important, all MicroMaterial instances should
-            // wrap BlockStateModelPart capturing the real block state.
-            // In-world rendering would pass in our own BlockMultipart state anyway.
-            var renderType = modelPart.getRenderType(ourState);
-            collector.submitCustomGeometry(poseStack, RenderTypeHelper.getEntityRenderType(renderType), (pose, consumer) -> {
-                int lastTint = -1;
-                int lastTintIndex = -1;
-                for (var side : Sides.SIDES_AND_NULL) {
-                    for (BakedQuad quad : modelPart.getQuads(side)) {
-                        float r = 1.0F;
-                        float g = 1.0F;
-                        float b = 1.0F;
-                        if (quad.materialInfo().tintIndex() != -1) {
-                            if (lastTintIndex != quad.materialInfo().tintIndex()) {
-                                lastTint = blockColors.getColor(ourState, null, null, quad.materialInfo().tintIndex());
-                                lastTintIndex = quad.materialInfo().tintIndex();
-                            }
-                            r = ARGB.redFloat(lastTint);
-                            g = ARGB.greenFloat(lastTint);
-                            b = ARGB.blueFloat(lastTint);
-                        }
-                        consumer.putBulkData(pose, quad, r, g, b, 1.0F, packedLight, packedOverlay);
-                    }
+            for (var side : Sides.SIDES_AND_NULL) {
+                for (BakedQuad quad : modelPart.getQuads(side)) {
+                    quadsByType.computeIfAbsent(quad.materialInfo().itemRenderType(), e -> new ArrayList<>()).add(quad);
                 }
-            });
+            }
         }
+        quadsByType.forEach((renderType, quads) -> collector.submitCustomGeometry(poseStack, renderType, (pose, consumer) -> {
+            var instance = new QuadInstance();
+            instance.setLightCoords(packedLight);
+            instance.setOverlayCoords(packedOverlay);
+            int lastTint = -1;
+            int lastTintIndex = -1;
+            for (BakedQuad quad : quads) {
+                int color = -1;
+                int tintIndex = quad.materialInfo().tintIndex();
+                if (tintIndex != -1) {
+                    if (lastTintIndex != tintIndex) {
+                        var tintSource = blockColors.getTintSource(ourState, tintIndex);
+                        lastTint = tintSource != null ? tintSource.color(ourState) : -1;
+                        lastTintIndex = tintIndex;
+                    }
+                    color = lastTint;
+                }
+                instance.setColor(ARGB.opaque(color));
+                consumer.putBakedQuad(pose, quad, instance);
+            }
+        }));
 
         // TODO
-//        clientMaterial.submitDynamic(part, displayContext, poseStack, collector, packedLight, packedOverlay, hasFoil, outlineColor);
+//        clientMaterial.submitDynamic(part, poseStack, collector, packedLight, packedOverlay, hasFoil, outlineColor);
         poseStack.popPose();
     }
 
-    public record Unbaked() implements SpecialModelRenderer.Unbaked {
+    public record Unbaked() implements SpecialModelRenderer.Unbaked<MicroMaterialComponent> {
 
         public static final Identifier TYPE = Identifier.fromNamespaceAndPath(MOD_ID, "microblock");
         public static final MapCodec<Unbaked> CODEC = MapCodec.unit(Unbaked::new);
 
         @Override
-        public SpecialModelRenderer<?> bake(BakingContext context) {
+        public SpecialModelRenderer<MicroMaterialComponent> bake(BakingContext context) {
             return new MicroblockItemRenderer();
         }
 
         @Override
-        public MapCodec<? extends SpecialModelRenderer.Unbaked> type() {
+        public MapCodec<? extends SpecialModelRenderer.Unbaked<MicroMaterialComponent>> type() {
             return CODEC;
         }
     }

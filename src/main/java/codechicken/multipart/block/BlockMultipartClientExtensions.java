@@ -2,6 +2,8 @@ package codechicken.multipart.block;
 
 import codechicken.multipart.util.PartRayTraceResult;
 import net.minecraft.client.particle.ParticleEngine;
+import net.minecraft.core.Direction;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -15,8 +17,8 @@ import org.jspecify.annotations.Nullable;
 public class BlockMultipartClientExtensions implements IClientBlockExtensions {
 
     @Override
-    public boolean addHitEffects(BlockState state, Level level, @Nullable HitResult target, ParticleEngine manager) {
-        if (!(target instanceof PartRayTraceResult hit)) return true;
+    public boolean addHitEffects(BlockState state, Level level, BlockPos pos, Direction face, ParticleEngine manager) {
+        if (!(Minecraft.getInstance().hitResult instanceof PartRayTraceResult hit) || !hit.getBlockPos().equals(pos)) return true;
 
         TileMultipart tile = BlockMultipart.getTile(level, hit.getBlockPos());
         if (tile == null) return true;

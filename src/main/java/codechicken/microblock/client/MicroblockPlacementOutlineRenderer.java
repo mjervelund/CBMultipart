@@ -10,19 +10,18 @@ import codechicken.multipart.util.Sides;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.MultiBufferSource;
+import com.mojang.blaze3d.vertex.QuadInstance;
+import net.minecraft.client.renderer.Sheets;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.BlockOutlineRenderState;
 import net.minecraft.client.renderer.state.level.LevelRenderState;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.ARGB;
+import net.minecraft.util.LightCoordsUtil;
 import net.neoforged.neoforge.client.CustomBlockOutlineRenderer;
-import net.neoforged.neoforge.client.RenderTypeHelper;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
@@ -45,30 +44,28 @@ public class MicroblockPlacementOutlineRenderer implements CustomBlockOutlineRen
     }
 
     @Override
-    public boolean render(BlockOutlineRenderState renderState, MultiBufferSource.BufferSource buffers, PoseStack poseStack, boolean translucentPass, LevelRenderState levelRenderState) {
-        if (renderState.isTranslucent() != translucentPass) return true;
-
+    public boolean render(BlockOutlineRenderState renderState, SubmitNodeCollector collector, PoseStack poseStack, LevelRenderState levelRenderState) {
         var camera = levelRenderState.cameraRenderState.pos;
         poseStack.pushPose();
         poseStack.translate(-camera.x, -camera.y, -camera.z);
-        renderPlacementGrid(poseStack.last(), buffers);
-        renderPlacementPreview(poseStack, buffers);
+        renderPlacementGrid(poseStack, collector);
+        renderPlacementPreview(poseStack, collector);
         poseStack.popPose();
 
         return true;
     }
 
-    private void renderPlacementGrid(PoseStack.Pose pose, MultiBufferSource.BufferSource buffers) {
-        Matrix4 mat = new Matrix4(pose);
-        transformFace(hit, side, mat);
-        VertexConsumer cons = new TransformingVertexConsumer(buffers.getBuffer(RenderTypes.lines()), mat);
+    private void renderPlacementGrid(PoseStack poseStack, SubmitNodeCollector collector) {
         // TODO high contrast?
         var lineWidth = Minecraft.getInstance().getWindow().getAppropriateLineWidth();
-        for (Line3 line : lines) {
-            bufferLinePair(cons, line.pt1, line.pt2, 0F, 0F, 0F, 0.4f, lineWidth);
-        }
-        // Explicit end batch so transparency with the placement preview works.
-        buffers.endBatch(RenderTypes.lines());
+        collector.submitCustomGeometry(poseStack, RenderTypes.lines(), (pose, buffer) -> {
+            Matrix4 mat = new Matrix4(pose);
+            transformFace(hit, side, mat);
+            VertexConsumer cons = new TransformingVertexConsumer(buffer, mat);
+            for (Line3 line : lines) {
+                bufferLinePair(cons, line.pt1, line.pt2, 0F, 0F, 0F, 0.4f, lineWidth);
+            }
+        });
     }
 
     private void bufferLinePair(VertexConsumer builder, Vector3 v1, Vector3 v2, float r, float g, float b, float a, float lineWidth) {
@@ -87,16 +84,13 @@ public class MicroblockPlacementOutlineRenderer implements CustomBlockOutlineRen
         mat.translate(0, rHit.y - 0.002, 0);
     }
 
-    private void renderPlacementPreview(PoseStack poseStack, MultiBufferSource.BufferSource buffers) {
+    private void renderPlacementPreview(PoseStack poseStack, SubmitNodeCollector collector) {
         if (preview == null) return;
 
         poseStack.pushPose();
         poseStack.translate(preview.pos.getX(), preview.pos.getY(), preview.pos.getZ());
-
-        var renderType = RenderTypeHelper.getEntityRenderType(ChunkSectionLayer.TRANSLUCENT);
-        renderPreviewParts(poseStack.last(), buffers.getBuffer(renderType), preview.parts);
-        buffers.endBatch(renderType);
-
+        // Ordered after the grid lines so the translucent preview blends over them.
+        collector.order(1).submitCustomGeometry(poseStack, Sheets.translucentBlockItemSheet(), (pose, buffer) -> renderPreviewParts(pose, buffer, preview.parts));
         poseStack.popPose();
     }
 
@@ -105,22 +99,22 @@ public class MicroblockPlacementOutlineRenderer implements CustomBlockOutlineRen
         var ourState = CBMultipartModContent.MULTIPART_BLOCK.get().defaultBlockState();
         int lastTint = -1;
         int lastTintIndex = -1;
+        var instance = new QuadInstance();
+        instance.setLightCoords(LightCoordsUtil.FULL_BRIGHT);
         for (var modelPart : parts) {
             for (var side : Sides.SIDES_AND_NULL) {
                 for (BakedQuad quad : modelPart.getQuads(side)) {
-                    float r = 1.0F;
-                    float g = 1.0F;
-                    float b = 1.0F;
+                    int color = -1;
                     if (quad.materialInfo().tintIndex() != -1) {
                         if (lastTintIndex != quad.materialInfo().tintIndex()) {
-                            lastTint = blockColors.getColor(ourState, null, null, quad.materialInfo().tintIndex());
+                            var tintSource = blockColors.getTintSource(ourState, quad.materialInfo().tintIndex());
+                            lastTint = tintSource != null ? tintSource.color(ourState) : -1;
                             lastTintIndex = quad.materialInfo().tintIndex();
                         }
-                        r = ARGB.redFloat(lastTint);
-                        g = ARGB.greenFloat(lastTint);
-                        b = ARGB.blueFloat(lastTint);
+                        color = lastTint;
                     }
-                    consumer.putBulkData(pose, quad, r, g, b, 0.4f, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+                    instance.setColor(ARGB.color(0.4F, color));
+                    consumer.putBakedQuad(pose, quad, instance);
                 }
             }
         }

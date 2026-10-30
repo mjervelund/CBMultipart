@@ -33,7 +33,7 @@ public class TileMultipartClient extends TileMultipart {
         if (getLevel() instanceof ClientLevel) {
             requestModelDataUpdate();
             BlockPos pos = getBlockPos();
-            Minecraft.getInstance().levelRenderer.setBlocksDirty(pos.getX(), pos.getY(), pos.getZ(), pos.getX(), pos.getY(), pos.getZ());
+            Minecraft.getInstance().levelExtractor.setBlocksDirty(pos.getX(), pos.getY(), pos.getZ(), pos.getX(), pos.getY(), pos.getZ());
         }
     }
 
