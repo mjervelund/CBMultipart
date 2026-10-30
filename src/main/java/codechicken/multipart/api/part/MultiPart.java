@@ -561,8 +561,8 @@ public interface MultiPart {
         builder.params.params.putAll(forBlock.params.params);
         builder.dynamicDrops.putAll(forBlock.dynamicDrops);
         // Parts don't get these as context.
-        builder.params.withOptionalParameter(LootContextParams.BLOCK_STATE, null);
-        builder.params.withOptionalParameter(LootContextParams.BLOCK_ENTITY, null);
+        builder.params.set(LootContextParams.BLOCK_STATE, null);
+        builder.params.set(LootContextParams.BLOCK_ENTITY, null);
         builder.withParameter(MultipartLootContextParams.MULTI_PART, part);
         return builder;
     }

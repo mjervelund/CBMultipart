@@ -6,7 +6,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
-import net.minecraft.core.RegistryCodecs;
+import net.minecraft.core.registries.codec.RegistryCodecs;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -78,7 +78,7 @@ public record SawComponent(List<Rule> rules, boolean defaultAllowCut) {
     public record Rule(HolderSet<Block> blocks, boolean allowCut) {
         //region Codecs
         public static final Codec<Rule> CODEC = RecordCodecBuilder.create(rule -> rule.group(
-                        RegistryCodecs.homogeneousList(Registries.BLOCK).fieldOf("blocks").forGetter(Rule::blocks),
+                        RegistryCodecs.holderSet(Registries.BLOCK).fieldOf("blocks").forGetter(Rule::blocks),
                         Codec.BOOL.fieldOf("allowCut").forGetter(Rule::allowCut)
                 ).apply(rule, Rule::new)
         );

@@ -752,7 +752,7 @@ public class TileMultipart extends BlockEntity implements IChunkLoadTile {
 
     public static void dropItem(ItemStack stack, Level level, Vector3 pos) {
         ItemEntity item = new ItemEntity(level, pos.x, pos.y, pos.z, stack);
-        item.setDeltaMovement(level.random.nextGaussian() * 0.05, level.random.nextGaussian() * 0.05 + 0.2, level.random.nextGaussian() * 0.05);
+        item.setDeltaMovement(level.getRandom().nextGaussian() * 0.05, level.getRandom().nextGaussian() * 0.05 + 0.2, level.getRandom().nextGaussian() * 0.05);
         item.setPickUpDelay(10);
         level.addFreshEntity(item);
     }

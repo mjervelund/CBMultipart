@@ -1,8 +1,8 @@
 package codechicken.multipart.util;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.CardinalLighting;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.ColorResolver;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -30,7 +30,7 @@ public record ProxyBlockAndTintGetter(BlockAndTintGetter other, BlockPos pos, Bl
     }
 
     // @formatter:off
-    @Override public float getShade(Direction face, boolean shade) { return other.getShade(face, shade); }
+    @Override public CardinalLighting cardinalLighting() { return other.cardinalLighting(); }
     @Override public LevelLightEngine getLightEngine() { return other.getLightEngine(); }
     @Override public int getBlockTint(BlockPos pos, ColorResolver resolver) { return other.getBlockTint(pos, resolver); }
     @Nullable @Override public BlockEntity getBlockEntity(BlockPos pos) { return other.getBlockEntity(pos); }

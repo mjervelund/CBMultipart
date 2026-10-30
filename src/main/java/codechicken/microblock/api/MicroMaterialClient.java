@@ -6,10 +6,10 @@ import codechicken.microblock.util.MaskedCuboid;
 import codechicken.multipart.util.PartRayTraceResult;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.client.particle.ParticleEngine;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -32,7 +32,7 @@ public abstract class MicroMaterialClient {
      * @param renderCuboids The cuboids and their masks we wish to render.
      * @param parts         The parts.
      */
-    public abstract void collectParts(@Nullable BlockAndTintGetter level, @Nullable BlockPos pos, ImmutableSet<MaskedCuboid> renderCuboids, List<BlockModelPart> parts);
+    public abstract void collectParts(@Nullable BlockAndTintGetter level, @Nullable BlockPos pos, ImmutableSet<MaskedCuboid> renderCuboids, List<BlockStateModelPart> parts);
 
     // TODO
 //    public void submitDynamic(MicroblockPart part, ItemDisplayContext displayCtx, PoseStack poseStack, SubmitNodeCollector collector, int packedLight, int packedOverlay, boolean hasFoil, int outlineColor) { }

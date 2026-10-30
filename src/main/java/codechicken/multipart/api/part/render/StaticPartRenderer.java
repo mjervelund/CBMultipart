@@ -2,11 +2,11 @@ package codechicken.multipart.api.part.render;
 
 import codechicken.multipart.api.RegisterMultipartRenderersEvent;
 import codechicken.multipart.api.part.MultiPart;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.model.data.ModelData;
 
@@ -32,7 +32,7 @@ public interface StaticPartRenderer<P extends MultiPart> {
      * @param rand      The {@link RandomSource} for this block position.
      * @param parts     The output collector.
      */
-    void collectParts(ModelData modelData, BlockAndTintGetter level, BlockPos pos, RandomSource rand, List<BlockModelPart> parts);
+    void collectParts(ModelData modelData, BlockAndTintGetter level, BlockPos pos, RandomSource rand, List<BlockStateModelPart> parts);
 
     @FunctionalInterface
     interface Factory<P extends MultiPart> {

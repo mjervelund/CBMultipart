@@ -11,8 +11,8 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
@@ -65,11 +65,11 @@ public class MicroblockItemRenderer implements SpecialModelRenderer<MicroMateria
         BlockColors blockColors = Minecraft.getInstance().getBlockColors();
 
         var cuboids = part.getRenderCuboids(true);
-        List<BlockModelPart> list = new ArrayList<>();
+        List<BlockStateModelPart> list = new ArrayList<>();
         clientMaterial.collectParts(null, null, cuboids, list);
         for (var modelPart : list) {
             // The state used for getRenderType here is not important, all MicroMaterial instances should
-            // wrap BlockModelPart capturing the real block state.
+            // wrap BlockStateModelPart capturing the real block state.
             // In-world rendering would pass in our own BlockMultipart state anyway.
             var renderType = modelPart.getRenderType(ourState);
             collector.submitCustomGeometry(poseStack, RenderTypeHelper.getEntityRenderType(renderType), (pose, consumer) -> {
@@ -80,10 +80,10 @@ public class MicroblockItemRenderer implements SpecialModelRenderer<MicroMateria
                         float r = 1.0F;
                         float g = 1.0F;
                         float b = 1.0F;
-                        if (quad.isTinted()) {
-                            if (lastTintIndex != quad.tintIndex()) {
-                                lastTint = blockColors.getColor(ourState, null, null, quad.tintIndex());
-                                lastTintIndex = quad.tintIndex();
+                        if (quad.materialInfo().tintIndex() != -1) {
+                            if (lastTintIndex != quad.materialInfo().tintIndex()) {
+                                lastTint = blockColors.getColor(ourState, null, null, quad.materialInfo().tintIndex());
+                                lastTintIndex = quad.materialInfo().tintIndex();
                             }
                             r = ARGB.redFloat(lastTint);
                             g = ARGB.greenFloat(lastTint);

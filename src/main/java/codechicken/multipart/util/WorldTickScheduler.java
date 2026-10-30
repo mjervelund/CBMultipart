@@ -9,6 +9,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.covers1624.quack.collection.FastStream;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.Identifier;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.ProblemReporter;
@@ -34,7 +35,7 @@ import static codechicken.multipart.CBMultipart.MOD_ID;
 class WorldTickScheduler extends SavedData {
 
     private static final SavedDataType<WorldTickScheduler> TYPE = new SavedDataType<>(
-            MOD_ID + "_scheduled_ticks",
+            Identifier.fromNamespaceAndPath(MOD_ID, "scheduled_ticks"),
             WorldTickScheduler::new,
             ctx -> CompoundTag.CODEC.flatXmap(tag -> {
                 var scheduler = new WorldTickScheduler(ctx);

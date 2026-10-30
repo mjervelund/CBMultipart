@@ -12,12 +12,12 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
-import net.minecraft.client.renderer.state.BlockOutlineRenderState;
-import net.minecraft.client.renderer.state.LevelRenderState;
+import net.minecraft.client.renderer.state.level.BlockOutlineRenderState;
+import net.minecraft.client.renderer.state.level.LevelRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.ARGB;
@@ -100,7 +100,7 @@ public class MicroblockPlacementOutlineRenderer implements CustomBlockOutlineRen
         poseStack.popPose();
     }
 
-    private static void renderPreviewParts(PoseStack.Pose pose, VertexConsumer consumer, List<BlockModelPart> parts) {
+    private static void renderPreviewParts(PoseStack.Pose pose, VertexConsumer consumer, List<BlockStateModelPart> parts) {
         var blockColors = Minecraft.getInstance().getBlockColors();
         var ourState = CBMultipartModContent.MULTIPART_BLOCK.get().defaultBlockState();
         int lastTint = -1;
@@ -111,10 +111,10 @@ public class MicroblockPlacementOutlineRenderer implements CustomBlockOutlineRen
                     float r = 1.0F;
                     float g = 1.0F;
                     float b = 1.0F;
-                    if (quad.isTinted()) {
-                        if (lastTintIndex != quad.tintIndex()) {
-                            lastTint = blockColors.getColor(ourState, null, null, quad.tintIndex());
-                            lastTintIndex = quad.tintIndex();
+                    if (quad.materialInfo().tintIndex() != -1) {
+                        if (lastTintIndex != quad.materialInfo().tintIndex()) {
+                            lastTint = blockColors.getColor(ourState, null, null, quad.materialInfo().tintIndex());
+                            lastTintIndex = quad.materialInfo().tintIndex();
                         }
                         r = ARGB.redFloat(lastTint);
                         g = ARGB.greenFloat(lastTint);
@@ -126,5 +126,5 @@ public class MicroblockPlacementOutlineRenderer implements CustomBlockOutlineRen
         }
     }
 
-    public record PlacementPreview(BlockPos pos, List<BlockModelPart> parts) { }
+    public record PlacementPreview(BlockPos pos, List<BlockStateModelPart> parts) { }
 }

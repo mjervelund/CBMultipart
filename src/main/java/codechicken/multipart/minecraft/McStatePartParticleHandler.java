@@ -30,8 +30,8 @@ public class McStatePartParticleHandler implements StandardPartParticleHandler<M
     }
 
     private static TextureAtlasSprite getParticleTexture(McStatePart part) {
-        return Minecraft.getInstance().getBlockRenderer().getBlockModelShaper()
-                .getBlockModel(part.getCurrentState())
-                .particleIcon(); // TODO fake level for model data
+        return Minecraft.getInstance().getModelManager().getBlockStateModelSet()
+                .getParticleMaterial(part.getCurrentState())
+                .sprite(); // TODO fake level for model data
     }
 }

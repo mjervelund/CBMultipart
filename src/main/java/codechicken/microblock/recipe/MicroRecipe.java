@@ -8,9 +8,7 @@ import codechicken.microblock.item.ItemMicroBlock;
 import codechicken.microblock.item.MicroMaterialComponent;
 import codechicken.microblock.item.SawComponent;
 import codechicken.microblock.util.MicroMaterialRegistry;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -26,8 +24,9 @@ public class MicroRecipe extends CustomRecipe {
 
     private static final int[] splitMap = { 3, 3, -1, 2 };
 
-    public MicroRecipe() {
-        super(CraftingBookCategory.MISC);
+    public static final MicroRecipe INSTANCE = new MicroRecipe();
+
+    private MicroRecipe() {
     }
 
     @Override
@@ -41,7 +40,7 @@ public class MicroRecipe extends CustomRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingInput inv, HolderLookup.Provider registries) {
+    public ItemStack assemble(CraftingInput inv) {
         return getAssemblyResult(inv);
     }
 

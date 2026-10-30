@@ -5,7 +5,7 @@ import codechicken.multipart.api.part.render.DynamicPartRenderer;
 import codechicken.multipart.api.part.render.OutlinePartRenderer;
 import codechicken.multipart.api.part.render.PartParticleHandler;
 import codechicken.multipart.api.part.render.StaticPartRenderer;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.neoforged.bus.api.Event;
 import net.neoforged.fml.event.IModBusEvent;

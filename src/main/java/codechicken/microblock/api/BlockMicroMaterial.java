@@ -11,8 +11,9 @@ import codechicken.multipart.util.PartRayTraceResult;
 import com.google.common.collect.ImmutableSet;
 import net.covers1624.quack.collection.FastStream;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.particle.ParticleEngine;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -21,7 +22,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
@@ -34,7 +35,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static net.covers1624.quack.util.SneakyUtils.unsafeCast;
 
 /**
  * Created by covers1624 on 26/6/22.
@@ -107,7 +107,7 @@ public class BlockMicroMaterial extends MicroMaterial {
         cons.accept(new MicroMaterialClient() {
 
             @Override
-            public void collectParts(@Nullable BlockAndTintGetter level, @Nullable BlockPos pos, ImmutableSet<MaskedCuboid> renderCuboids, List<BlockModelPart> parts) {
+            public void collectParts(@Nullable BlockAndTintGetter level, @Nullable BlockPos pos, ImmutableSet<MaskedCuboid> renderCuboids, List<BlockStateModelPart> parts) {
                 MicroblockRender.collectParts(level, pos, state, renderCuboids, parts);
             }
 
@@ -152,7 +152,8 @@ public class BlockMicroMaterial extends MicroMaterial {
             }
 
             private TextureAtlasSprite getSprite(Level level, BlockPos pos) {
-                return Minecraft.getInstance().getBlockRenderer().getBlockModelShaper().getParticleIcon(state, level, pos);
+                BlockAndTintGetter getter = level instanceof BlockAndTintGetter g ? g : BlockAndTintGetter.EMPTY;
+                return Minecraft.getInstance().getModelManager().getBlockStateModelSet().getParticleMaterial(state, getter, pos).sprite();
             }
         });
     }
@@ -172,9 +173,9 @@ public class BlockMicroMaterial extends MicroMaterial {
         String path = blockKey.getPath();
         if (!state.getProperties().isEmpty()) {
             // Stable sort all keys based off their name, otherwise they may differ on the server/client.
-            path += "//" + FastStream.of(state.getValues().entrySet())
-                    .sorted(Comparator.comparing(e -> e.getKey().getName()))
-                    .map(e -> e.getKey().getName() + "." + e.getKey().getName(unsafeCast(e.getValue())))
+            path += "//" + FastStream.of(state.getValues().toList())
+                    .sorted(Comparator.comparing(e -> e.property().getName()))
+                    .map(e -> e.property().getName() + "." + e.valueName())
                     .join("/");
         }
         return Identifier.fromNamespaceAndPath(blockKey.getNamespace(), path);

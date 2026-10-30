@@ -5,7 +5,7 @@ import codechicken.multipart.api.part.render.OutlinePartRenderer;
 import codechicken.multipart.block.BlockMultipart;
 import codechicken.multipart.block.TileMultipart;
 import codechicken.multipart.util.PartRayTraceResult;
-import net.minecraft.client.renderer.state.BlockOutlineRenderState;
+import net.minecraft.client.renderer.state.level.BlockOutlineRenderState;
 import net.neoforged.neoforge.client.event.ExtractBlockOutlineRenderStateEvent;
 import net.neoforged.neoforge.common.NeoForge;
 

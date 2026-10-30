@@ -74,7 +74,7 @@ public class DataGenerators {
         @Override
         protected void addTags(HolderLookup.Provider pProvider) {
             tag(STONE_ROD)
-                    .add(STONE_ROD_ITEM.get());
+                    .add(STONE_ROD_ITEM.getKey());
         }
     }
 

@@ -64,7 +64,7 @@ public class RedstoneInteractions {
         if ((vMask & mask) > 0) {
             int m = world.getSignal(pos, Direction.from3DDataValue(side ^ 1));
             if (m < 15 && block == Blocks.REDSTONE_WIRE) {
-                m = Math.max(m, state.getValue(RedStoneWireBlock.POWER));
+                m = Math.max(m, state.getValue(RedstoneWireBlock.POWER));
             } //painful vanilla kludge
             return m;
         }
@@ -225,7 +225,7 @@ public class RedstoneInteractions {
 
         // For all other blocks, rely on canConnectRedstone logic. Side is respective to the wire
         // attempting the connection, not the target side. Therefore, it is flipped
-        if (power || block.canConnectRedstone(state, world, pos, Direction.from3DDataValue(side).getOpposite())) {
+        if (power || state.shouldRedstoneWireConnectTo(world, pos, Direction.from3DDataValue(side).getOpposite())) {
             return 0x1F;
         }
         return 0;

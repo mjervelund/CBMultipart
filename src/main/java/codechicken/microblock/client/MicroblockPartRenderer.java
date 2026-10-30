@@ -3,10 +3,10 @@ package codechicken.microblock.client;
 import codechicken.microblock.api.MicroMaterialClient;
 import codechicken.microblock.part.MicroblockPart;
 import codechicken.multipart.api.part.render.StaticPartRenderer;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.neoforged.neoforge.model.data.ModelData;
 
 import java.util.List;
@@ -17,7 +17,7 @@ import java.util.List;
 public class MicroblockPartRenderer implements StaticPartRenderer<MicroblockPart> {
 
     @Override
-    public void collectParts(ModelData modelData, BlockAndTintGetter level, BlockPos pos, RandomSource rand, List<BlockModelPart> parts) {
+    public void collectParts(ModelData modelData, BlockAndTintGetter level, BlockPos pos, RandomSource rand, List<BlockStateModelPart> parts) {
         var microblockData = modelData.get(MicroblockModelData.TYPE);
         if (microblockData == null) return;
 

@@ -7,16 +7,17 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.covers1624.quack.util.CrashLock;
-import net.minecraft.client.color.block.BlockColor;
+import net.minecraft.client.color.block.BlockTintSource;
 import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.model.data.ModelData;
 import org.jspecify.annotations.Nullable;
 
+import java.util.AbstractList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -70,8 +71,8 @@ public class MultipartTintRegistry {
         }
     }
 
-    private static void onRegisterBlockColorHandlers(RegisterColorHandlersEvent.Block event) {
-        event.register(new MultipartBlockColor(event.getBlockColors()), CBMultipartModContent.MULTIPART_BLOCK.get());
+    private static void onRegisterBlockColorHandlers(RegisterColorHandlersEvent.BlockTintSources event) {
+        event.register(new PassthroughTintSources(event.getBlockColors()), CBMultipartModContent.MULTIPART_BLOCK.get());
     }
 
     private static @Nullable ProxyTint getProxyTint(int tintIndex) {
@@ -85,20 +86,45 @@ public class MultipartTintRegistry {
 
     private record ProxyTint(BlockState state, int tintIndex) { }
 
-    private record MultipartBlockColor(BlockColors blockColors) implements BlockColor {
+    /**
+     * Tint layers are looked up by index in a per-block list. This list grows as passthrough tints are registered.
+     */
+    private static class PassthroughTintSources extends AbstractList<BlockTintSource> {
+
+        private final BlockColors blockColors;
+
+        private PassthroughTintSources(BlockColors blockColors) {
+            this.blockColors = blockColors;
+        }
 
         @Override
-        public int getColor(BlockState state, @Nullable BlockAndTintGetter level, @Nullable BlockPos pos, int tintIndex) {
+        public BlockTintSource get(int tintIndex) {
+            return new PassthroughTintSource(blockColors, tintIndex);
+        }
+
+        @Override
+        public int size() {
+            return next.get();
+        }
+    }
+
+    private record PassthroughTintSource(BlockColors blockColors, int tintIndex) implements BlockTintSource {
+
+        @Override
+        public int color(BlockState state) {
             var proxyTint = getProxyTint(tintIndex);
-            if (proxyTint != null) {
-                return blockColors.getColor(
-                        proxyTint.state,
-                        level != null && pos != null ? new ProxyBlockAndTintGetter(level, pos, proxyTint.state, ModelData.EMPTY) : null,
-                        pos,
-                        proxyTint.tintIndex
-                );
-            }
-            return -1;
+            if (proxyTint == null) return -1;
+            var source = blockColors.getTintSource(proxyTint.state, proxyTint.tintIndex);
+            return source != null ? source.color(proxyTint.state) : -1;
+        }
+
+        @Override
+        public int colorInWorld(BlockState state, BlockAndTintGetter level, BlockPos pos) {
+            var proxyTint = getProxyTint(tintIndex);
+            if (proxyTint == null) return -1;
+            var source = blockColors.getTintSource(proxyTint.state, proxyTint.tintIndex);
+            if (source == null) return -1;
+            return source.colorInWorld(proxyTint.state, new ProxyBlockAndTintGetter(level, pos, proxyTint.state, ModelData.EMPTY), pos);
         }
     }
 }

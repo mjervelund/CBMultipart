@@ -19,11 +19,10 @@ import com.google.common.collect.ImmutableSet;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.covers1624.quack.util.CrashLock;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
-import net.minecraft.client.renderer.state.BlockOutlineRenderState;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+import net.minecraft.client.renderer.state.level.BlockOutlineRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
@@ -31,8 +30,7 @@ import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.BlockAndTintGetter;
-import net.minecraft.world.level.EmptyBlockAndTintGetter;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.neoforged.bus.api.EventPriority;
@@ -57,7 +55,7 @@ public class MicroblockRender {
     private static final CrashLock LOCK = new CrashLock("Already Initialized");
     private static final ThreadLocal<MicroblockQuadPipeline> PIPELINES = ThreadLocal.withInitial(MicroblockQuadPipeline::new);
 
-    private static final Cache<CacheKey, List<BlockModelPart>> CACHE = CacheBuilder.newBuilder()
+    private static final Cache<CacheKey, List<BlockStateModelPart>> CACHE = CacheBuilder.newBuilder()
             .expireAfterAccess(30, TimeUnit.MINUTES)
             .build();
 
@@ -99,8 +97,8 @@ public class MicroblockRender {
 
         PlacementPreview preview = null;
         if (placement != null && materialClient != null) {
-            List<BlockModelPart> parts = new ArrayList<>();
-            materialClient.collectParts(player.level(), placement.pos, placement.part.getRenderCuboids(true), parts);
+            List<BlockStateModelPart> parts = new ArrayList<>();
+            materialClient.collectParts((BlockAndTintGetter) player.level(), placement.pos, placement.part.getRenderCuboids(true), parts);
             preview = new PlacementPreview(placement.pos, parts);
         }
 
@@ -121,12 +119,11 @@ public class MicroblockRender {
 
     }
 
-    public static void collectParts(@Nullable BlockAndTintGetter level, @Nullable BlockPos pos, BlockState state, ImmutableSet<MaskedCuboid> renderCuboids, List<BlockModelPart> partsOutput) {
+    public static void collectParts(@Nullable BlockAndTintGetter level, @Nullable BlockPos pos, BlockState state, ImmutableSet<MaskedCuboid> renderCuboids, List<BlockStateModelPart> partsOutput) {
         MicroblockQuadPipeline pipeline = PIPELINES.get();
         RandomSource randy = RandomSource.create();
 
-        BlockRenderDispatcher dispatcher = Minecraft.getInstance().getBlockRenderer();
-        var model = dispatcher.getBlockModel(state);
+        var model = Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(state);
 
         long seed = 42L;
         if (level != null) {
@@ -166,7 +163,7 @@ public class MicroblockRender {
     }
 
     private static BlockAndTintGetter levelOrEmpty(@Nullable BlockAndTintGetter level) {
-        return level != null ? level : EmptyBlockAndTintGetter.INSTANCE;
+        return level != null ? level : BlockAndTintGetter.EMPTY;
     }
 
     private static BlockPos posOrZero(@Nullable BlockPos pos) {
@@ -177,13 +174,13 @@ public class MicroblockRender {
 
     private static final class MicroblockQuadPipeline {
 
-        private final List<BlockModelPart> collector = new ObjectArrayList<>();
+        private final List<BlockStateModelPart> collector = new ObjectArrayList<>();
         private final Quad mutableQuad = new Quad();
         private final QuadClamper clamper = new QuadClamper();
         private final QuadFaceStripper faceStripper = new QuadFaceStripper();
         private final QuadReInterpolator reInterpolator = new QuadReInterpolator();
 
-        public void transform(BlockStateModel model, @Nullable BlockAndTintGetter level, @Nullable BlockPos pos, BlockState state, RandomSource randy, Iterable<MaskedCuboid> renderCuboids, List<BlockModelPart> output) {
+        public void transform(BlockStateModel model, @Nullable BlockAndTintGetter level, @Nullable BlockPos pos, BlockState state, RandomSource randy, Iterable<MaskedCuboid> renderCuboids, List<BlockStateModelPart> output) {
             collector.clear();
             model.collectParts(levelOrEmpty(level), posOrZero(pos), state, randy, collector);
             for (var modelPart : collector) {
@@ -198,13 +195,13 @@ public class MicroblockRender {
             collector.clear();
         }
 
-        private List<BakedQuad> transformPart(BlockModelPart modelPart, BlockState state, Iterable<MaskedCuboid> renderCuboids) {
+        private List<BakedQuad> transformPart(BlockStateModelPart modelPart, BlockState state, Iterable<MaskedCuboid> renderCuboids) {
             ImmutableList.Builder<BakedQuad> quads = ImmutableList.builder();
             for (var side : Sides.SIDES_AND_NULL) {
                 for (var quad : modelPart.getQuads(side)) {
                     int tintIndex = -1;
-                    if (quad.isTinted()) {
-                        tintIndex = MultipartTintRegistry.getOrRegisterPassthroughTint(state, quad.tintIndex());
+                    if (quad.materialInfo().tintIndex() != -1) {
+                        tintIndex = MultipartTintRegistry.getOrRegisterPassthroughTint(state, quad.materialInfo().tintIndex());
                     }
                     transformQuad(quad, tintIndex, renderCuboids, quads);
                 }

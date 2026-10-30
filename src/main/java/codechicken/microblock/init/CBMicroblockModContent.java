@@ -19,19 +19,21 @@ import codechicken.microblock.recipe.MicroRecipe;
 import codechicken.microblock.util.MicroMaterialRegistry;
 import codechicken.multipart.api.MultipartType;
 import net.covers1624.quack.util.CrashLock;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ToolMaterial;
-import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CopperBulbBlock;
 import net.minecraft.world.level.block.RedstoneLampBlock;
@@ -109,7 +111,7 @@ public class CBMicroblockModContent {
     public static final DeferredHolder<MultipartType<?>, EdgeMicroFactory> EDGE_MICROBLOCK_PART = MULTIPART_TYPES.register("edge", EdgeMicroFactory::new);
     public static final DeferredHolder<MultipartType<?>, PostMicroblockFactory> POST_MICROBLOCK_PART = MULTIPART_TYPES.register("post", PostMicroblockFactory::new);
 
-    public static final DeferredHolder<RecipeSerializer<?>, CustomRecipe.Serializer<? extends CustomRecipe>> MICRO_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register("microblock", () -> new CustomRecipe.Serializer<>(e -> new MicroRecipe()));
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<MicroRecipe>> MICRO_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register("microblock", () -> new RecipeSerializer<>(MapCodec.unit(MicroRecipe.INSTANCE), StreamCodec.unit(MicroRecipe.INSTANCE)));
 
     public static boolean netheriteSawCutsEverything;
 
@@ -254,22 +256,22 @@ public class CBMicroblockModContent {
             registerMaterial(r, new BlockMicroMaterial(Blocks.SANDSTONE));
             registerMaterial(r, new BlockMicroMaterial(Blocks.CHISELED_SANDSTONE));
             registerMaterial(r, new BlockMicroMaterial(Blocks.CUT_SANDSTONE));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.WHITE_WOOL));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.ORANGE_WOOL));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.MAGENTA_WOOL));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.LIGHT_BLUE_WOOL));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.YELLOW_WOOL));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.LIME_WOOL));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.PINK_WOOL));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.GRAY_WOOL));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.LIGHT_GRAY_WOOL));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.CYAN_WOOL));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.PURPLE_WOOL));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.BLUE_WOOL));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.BROWN_WOOL));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.GREEN_WOOL));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.RED_WOOL));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.BLACK_WOOL));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.WOOL.pick(DyeColor.WHITE)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.WOOL.pick(DyeColor.ORANGE)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.WOOL.pick(DyeColor.MAGENTA)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.WOOL.pick(DyeColor.LIGHT_BLUE)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.WOOL.pick(DyeColor.YELLOW)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.WOOL.pick(DyeColor.LIME)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.WOOL.pick(DyeColor.PINK)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.WOOL.pick(DyeColor.GRAY)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.WOOL.pick(DyeColor.LIGHT_GRAY)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.WOOL.pick(DyeColor.CYAN)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.WOOL.pick(DyeColor.PURPLE)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.WOOL.pick(DyeColor.BLUE)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.WOOL.pick(DyeColor.BROWN)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.WOOL.pick(DyeColor.GREEN)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.WOOL.pick(DyeColor.RED)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.WOOL.pick(DyeColor.BLACK)));
             registerMaterial(r, new BlockMicroMaterial(Blocks.GOLD_BLOCK));
             registerMaterial(r, new BlockMicroMaterial(Blocks.IRON_BLOCK));
             registerMaterial(r, new BlockMicroMaterial(Blocks.BRICKS));
@@ -296,22 +298,22 @@ public class CBMicroblockModContent {
             registerMaterial(r, new BlockMicroMaterial(Blocks.GLOWSTONE));
             registerMaterial(r, new BlockMicroMaterial(Blocks.CARVED_PUMPKIN));
             registerMaterial(r, new BlockMicroMaterial(Blocks.JACK_O_LANTERN));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.WHITE_STAINED_GLASS));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.ORANGE_STAINED_GLASS));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.MAGENTA_STAINED_GLASS));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.LIGHT_BLUE_STAINED_GLASS));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.YELLOW_STAINED_GLASS));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.LIME_STAINED_GLASS));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.PINK_STAINED_GLASS));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.GRAY_STAINED_GLASS));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.LIGHT_GRAY_STAINED_GLASS));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.CYAN_STAINED_GLASS));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.PURPLE_STAINED_GLASS));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.BLUE_STAINED_GLASS));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.BROWN_STAINED_GLASS));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.GREEN_STAINED_GLASS));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.RED_STAINED_GLASS));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.BLACK_STAINED_GLASS));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.STAINED_GLASS.pick(DyeColor.WHITE)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.STAINED_GLASS.pick(DyeColor.ORANGE)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.STAINED_GLASS.pick(DyeColor.MAGENTA)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.STAINED_GLASS.pick(DyeColor.LIGHT_BLUE)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.STAINED_GLASS.pick(DyeColor.YELLOW)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.STAINED_GLASS.pick(DyeColor.LIME)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.STAINED_GLASS.pick(DyeColor.PINK)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.STAINED_GLASS.pick(DyeColor.GRAY)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.STAINED_GLASS.pick(DyeColor.LIGHT_GRAY)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.STAINED_GLASS.pick(DyeColor.CYAN)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.STAINED_GLASS.pick(DyeColor.PURPLE)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.STAINED_GLASS.pick(DyeColor.BLUE)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.STAINED_GLASS.pick(DyeColor.BROWN)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.STAINED_GLASS.pick(DyeColor.GREEN)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.STAINED_GLASS.pick(DyeColor.RED)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.STAINED_GLASS.pick(DyeColor.BLACK)));
             registerMaterial(r, new BlockMicroMaterial(Blocks.STONE_BRICKS));
             registerMaterial(r, new BlockMicroMaterial(Blocks.MOSSY_STONE_BRICKS));
             registerMaterial(r, new BlockMicroMaterial(Blocks.CRACKED_STONE_BRICKS));
@@ -334,22 +336,22 @@ public class CBMicroblockModContent {
             registerMaterial(r, new BlockMicroMaterial(Blocks.QUARTZ_BLOCK));
             registerMaterial(r, new BlockMicroMaterial(Blocks.CHISELED_QUARTZ_BLOCK));
             registerMaterial(r, new BlockMicroMaterial(Blocks.QUARTZ_PILLAR));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.WHITE_TERRACOTTA));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.ORANGE_TERRACOTTA));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.MAGENTA_TERRACOTTA));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.LIGHT_BLUE_TERRACOTTA));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.YELLOW_TERRACOTTA));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.LIME_TERRACOTTA));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.PINK_TERRACOTTA));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.GRAY_TERRACOTTA));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.LIGHT_GRAY_TERRACOTTA));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.CYAN_TERRACOTTA));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.PURPLE_TERRACOTTA));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.BLUE_TERRACOTTA));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.BROWN_TERRACOTTA));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.GREEN_TERRACOTTA));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.RED_TERRACOTTA));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.BLACK_TERRACOTTA));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.DYED_TERRACOTTA.pick(DyeColor.WHITE)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.DYED_TERRACOTTA.pick(DyeColor.ORANGE)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.DYED_TERRACOTTA.pick(DyeColor.MAGENTA)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.DYED_TERRACOTTA.pick(DyeColor.LIGHT_BLUE)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.DYED_TERRACOTTA.pick(DyeColor.YELLOW)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.DYED_TERRACOTTA.pick(DyeColor.LIME)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.DYED_TERRACOTTA.pick(DyeColor.PINK)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.DYED_TERRACOTTA.pick(DyeColor.GRAY)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.DYED_TERRACOTTA.pick(DyeColor.LIGHT_GRAY)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.DYED_TERRACOTTA.pick(DyeColor.CYAN)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.DYED_TERRACOTTA.pick(DyeColor.PURPLE)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.DYED_TERRACOTTA.pick(DyeColor.BLUE)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.DYED_TERRACOTTA.pick(DyeColor.BROWN)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.DYED_TERRACOTTA.pick(DyeColor.GREEN)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.DYED_TERRACOTTA.pick(DyeColor.RED)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.DYED_TERRACOTTA.pick(DyeColor.BLACK)));
             registerMaterial(r, new BlockMicroMaterial(Blocks.SLIME_BLOCK));
             registerMaterial(r, new BlockMicroMaterial(Blocks.PRISMARINE));
             registerMaterial(r, new BlockMicroMaterial(Blocks.PRISMARINE_BRICKS));
@@ -374,54 +376,54 @@ public class CBMicroblockModContent {
             registerMaterial(r, new BlockMicroMaterial(Blocks.NETHER_WART_BLOCK));
             registerMaterial(r, new BlockMicroMaterial(Blocks.RED_NETHER_BRICKS));
             registerMaterial(r, new BlockMicroMaterial(Blocks.BONE_BLOCK));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.WHITE_GLAZED_TERRACOTTA));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.ORANGE_GLAZED_TERRACOTTA));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.MAGENTA_GLAZED_TERRACOTTA));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.LIGHT_BLUE_GLAZED_TERRACOTTA));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.YELLOW_GLAZED_TERRACOTTA));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.LIME_GLAZED_TERRACOTTA));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.PINK_GLAZED_TERRACOTTA));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.GRAY_GLAZED_TERRACOTTA));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.LIGHT_GRAY_GLAZED_TERRACOTTA));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.CYAN_GLAZED_TERRACOTTA));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.PURPLE_GLAZED_TERRACOTTA));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.BLUE_GLAZED_TERRACOTTA));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.BROWN_GLAZED_TERRACOTTA));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.GREEN_GLAZED_TERRACOTTA));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.RED_GLAZED_TERRACOTTA));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.BLACK_GLAZED_TERRACOTTA));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.WHITE_CONCRETE));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.ORANGE_CONCRETE));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.MAGENTA_CONCRETE));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.LIGHT_BLUE_CONCRETE));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.YELLOW_CONCRETE));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.LIME_CONCRETE));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.PINK_CONCRETE));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.GRAY_CONCRETE));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.LIGHT_GRAY_CONCRETE));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.CYAN_CONCRETE));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.PURPLE_CONCRETE));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.BLUE_CONCRETE));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.BROWN_CONCRETE));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.GREEN_CONCRETE));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.RED_CONCRETE));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.BLACK_CONCRETE));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.WHITE_CONCRETE_POWDER)); //TODO Gravity -> Concrete?
-            registerMaterial(r, new BlockMicroMaterial(Blocks.ORANGE_CONCRETE_POWDER)); //TODO Gravity -> Concrete?
-            registerMaterial(r, new BlockMicroMaterial(Blocks.MAGENTA_CONCRETE_POWDER)); //TODO Gravity -> Concrete?
-            registerMaterial(r, new BlockMicroMaterial(Blocks.LIGHT_BLUE_CONCRETE_POWDER)); //TODO Gravity -> Concrete?
-            registerMaterial(r, new BlockMicroMaterial(Blocks.YELLOW_CONCRETE_POWDER)); //TODO Gravity -> Concrete?
-            registerMaterial(r, new BlockMicroMaterial(Blocks.LIME_CONCRETE_POWDER)); //TODO Gravity -> Concrete?
-            registerMaterial(r, new BlockMicroMaterial(Blocks.PINK_CONCRETE_POWDER)); //TODO Gravity -> Concrete?
-            registerMaterial(r, new BlockMicroMaterial(Blocks.GRAY_CONCRETE_POWDER)); //TODO Gravity -> Concrete?
-            registerMaterial(r, new BlockMicroMaterial(Blocks.LIGHT_GRAY_CONCRETE_POWDER)); //TODO Gravity -> Concrete?
-            registerMaterial(r, new BlockMicroMaterial(Blocks.CYAN_CONCRETE_POWDER)); //TODO Gravity -> Concrete?
-            registerMaterial(r, new BlockMicroMaterial(Blocks.PURPLE_CONCRETE_POWDER)); //TODO Gravity -> Concrete?
-            registerMaterial(r, new BlockMicroMaterial(Blocks.BLUE_CONCRETE_POWDER)); //TODO Gravity -> Concrete?
-            registerMaterial(r, new BlockMicroMaterial(Blocks.BROWN_CONCRETE_POWDER)); //TODO Gravity -> Concrete?
-            registerMaterial(r, new BlockMicroMaterial(Blocks.GREEN_CONCRETE_POWDER)); //TODO Gravity -> Concrete?
-            registerMaterial(r, new BlockMicroMaterial(Blocks.RED_CONCRETE_POWDER)); //TODO Gravity -> Concrete?
-            registerMaterial(r, new BlockMicroMaterial(Blocks.BLACK_CONCRETE_POWDER)); //TODO Gravity -> Concrete?
+            registerMaterial(r, new BlockMicroMaterial(Blocks.GLAZED_TERRACOTTA.pick(DyeColor.WHITE)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.GLAZED_TERRACOTTA.pick(DyeColor.ORANGE)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.GLAZED_TERRACOTTA.pick(DyeColor.MAGENTA)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.GLAZED_TERRACOTTA.pick(DyeColor.LIGHT_BLUE)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.GLAZED_TERRACOTTA.pick(DyeColor.YELLOW)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.GLAZED_TERRACOTTA.pick(DyeColor.LIME)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.GLAZED_TERRACOTTA.pick(DyeColor.PINK)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.GLAZED_TERRACOTTA.pick(DyeColor.GRAY)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.GLAZED_TERRACOTTA.pick(DyeColor.LIGHT_GRAY)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.GLAZED_TERRACOTTA.pick(DyeColor.CYAN)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.GLAZED_TERRACOTTA.pick(DyeColor.PURPLE)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.GLAZED_TERRACOTTA.pick(DyeColor.BLUE)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.GLAZED_TERRACOTTA.pick(DyeColor.BROWN)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.GLAZED_TERRACOTTA.pick(DyeColor.GREEN)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.GLAZED_TERRACOTTA.pick(DyeColor.RED)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.GLAZED_TERRACOTTA.pick(DyeColor.BLACK)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CONCRETE.pick(DyeColor.WHITE)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CONCRETE.pick(DyeColor.ORANGE)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CONCRETE.pick(DyeColor.MAGENTA)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CONCRETE.pick(DyeColor.LIGHT_BLUE)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CONCRETE.pick(DyeColor.YELLOW)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CONCRETE.pick(DyeColor.LIME)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CONCRETE.pick(DyeColor.PINK)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CONCRETE.pick(DyeColor.GRAY)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CONCRETE.pick(DyeColor.LIGHT_GRAY)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CONCRETE.pick(DyeColor.CYAN)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CONCRETE.pick(DyeColor.PURPLE)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CONCRETE.pick(DyeColor.BLUE)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CONCRETE.pick(DyeColor.BROWN)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CONCRETE.pick(DyeColor.GREEN)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CONCRETE.pick(DyeColor.RED)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CONCRETE.pick(DyeColor.BLACK)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CONCRETE_POWDER.pick(DyeColor.WHITE))); //TODO Gravity -> Concrete?
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CONCRETE_POWDER.pick(DyeColor.ORANGE))); //TODO Gravity -> Concrete?
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CONCRETE_POWDER.pick(DyeColor.MAGENTA))); //TODO Gravity -> Concrete?
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CONCRETE_POWDER.pick(DyeColor.LIGHT_BLUE))); //TODO Gravity -> Concrete?
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CONCRETE_POWDER.pick(DyeColor.YELLOW))); //TODO Gravity -> Concrete?
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CONCRETE_POWDER.pick(DyeColor.LIME))); //TODO Gravity -> Concrete?
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CONCRETE_POWDER.pick(DyeColor.PINK))); //TODO Gravity -> Concrete?
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CONCRETE_POWDER.pick(DyeColor.GRAY))); //TODO Gravity -> Concrete?
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CONCRETE_POWDER.pick(DyeColor.LIGHT_GRAY))); //TODO Gravity -> Concrete?
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CONCRETE_POWDER.pick(DyeColor.CYAN))); //TODO Gravity -> Concrete?
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CONCRETE_POWDER.pick(DyeColor.PURPLE))); //TODO Gravity -> Concrete?
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CONCRETE_POWDER.pick(DyeColor.BLUE))); //TODO Gravity -> Concrete?
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CONCRETE_POWDER.pick(DyeColor.BROWN))); //TODO Gravity -> Concrete?
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CONCRETE_POWDER.pick(DyeColor.GREEN))); //TODO Gravity -> Concrete?
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CONCRETE_POWDER.pick(DyeColor.RED))); //TODO Gravity -> Concrete?
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CONCRETE_POWDER.pick(DyeColor.BLACK))); //TODO Gravity -> Concrete?
             registerMaterial(r, new BlockMicroMaterial(Blocks.DRIED_KELP_BLOCK));
             registerMaterial(r, new BlockMicroMaterial(Blocks.DEAD_TUBE_CORAL_BLOCK));
             registerMaterial(r, new BlockMicroMaterial(Blocks.DEAD_BRAIN_CORAL_BLOCK));
@@ -472,40 +474,40 @@ public class CBMicroblockModContent {
             registerMaterial(r, new BlockMicroMaterial(Blocks.TINTED_GLASS));
             registerMaterial(r, new BlockMicroMaterial(Blocks.SCULK));
             registerMaterial(r, new BlockMicroMaterial(Blocks.SCULK_CATALYST));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.OXIDIZED_COPPER));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.WEATHERED_COPPER));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.EXPOSED_COPPER));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.COPPER_BLOCK)); //TODO Oxidization (normal -> exposed -> weathered -> oxidized)
+            registerMaterial(r, new BlockMicroMaterial(Blocks.COPPER_BLOCK.weathering().oxidized()));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.COPPER_BLOCK.weathering().weathered()));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.COPPER_BLOCK.weathering().exposed()));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.COPPER_BLOCK.weathering().unaffected())); //TODO Oxidization (normal -> exposed -> weathered -> oxidized)
             registerMaterial(r, new BlockMicroMaterial(Blocks.COPPER_ORE));
             registerMaterial(r, new BlockMicroMaterial(Blocks.DEEPSLATE_COPPER_ORE));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.OXIDIZED_CUT_COPPER));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.WEATHERED_CUT_COPPER));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.EXPOSED_CUT_COPPER));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.CUT_COPPER)); //TODO Oxidization (normal -> exposed -> weathered -> oxidized)
-            registerMaterial(r, new BlockMicroMaterial(Blocks.OXIDIZED_CHISELED_COPPER));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.WEATHERED_CHISELED_COPPER));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.EXPOSED_CHISELED_COPPER));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.CHISELED_COPPER)); //TODO Oxidization (normal -> exposed -> weathered -> oxidized)
-            registerMaterial(r, new BlockMicroMaterial(Blocks.WAXED_COPPER_BLOCK));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.WAXED_WEATHERED_COPPER));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.WAXED_EXPOSED_COPPER));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.WAXED_OXIDIZED_COPPER));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.WAXED_OXIDIZED_CUT_COPPER));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.WAXED_WEATHERED_CUT_COPPER));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.WAXED_EXPOSED_CUT_COPPER));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.WAXED_CUT_COPPER));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.WAXED_OXIDIZED_CHISELED_COPPER));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.WAXED_WEATHERED_CHISELED_COPPER));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.WAXED_EXPOSED_CHISELED_COPPER));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.WAXED_CHISELED_COPPER));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.COPPER_BULB.defaultBlockState().setValue(CopperBulbBlock.LIT, true))); //TODO Do these even make sense?
-            registerMaterial(r, new BlockMicroMaterial(Blocks.EXPOSED_COPPER_BULB.defaultBlockState().setValue(CopperBulbBlock.LIT, true)));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.WEATHERED_COPPER_BULB.defaultBlockState().setValue(CopperBulbBlock.LIT, true)));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.OXIDIZED_COPPER_BULB.defaultBlockState().setValue(CopperBulbBlock.LIT, true)));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.WAXED_COPPER_BULB.defaultBlockState().setValue(CopperBulbBlock.LIT, true)));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.WAXED_EXPOSED_COPPER_BULB.defaultBlockState().setValue(CopperBulbBlock.LIT, true)));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.WAXED_WEATHERED_COPPER_BULB.defaultBlockState().setValue(CopperBulbBlock.LIT, true)));
-            registerMaterial(r, new BlockMicroMaterial(Blocks.WAXED_OXIDIZED_COPPER_BULB.defaultBlockState().setValue(CopperBulbBlock.LIT, true)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CUT_COPPER.weathering().oxidized()));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CUT_COPPER.weathering().weathered()));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CUT_COPPER.weathering().exposed()));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CUT_COPPER.weathering().unaffected())); //TODO Oxidization (normal -> exposed -> weathered -> oxidized)
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CHISELED_COPPER.weathering().oxidized()));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CHISELED_COPPER.weathering().weathered()));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CHISELED_COPPER.weathering().exposed()));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CHISELED_COPPER.weathering().unaffected())); //TODO Oxidization (normal -> exposed -> weathered -> oxidized)
+            registerMaterial(r, new BlockMicroMaterial(Blocks.COPPER_BLOCK.waxed().unaffected()));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.COPPER_BLOCK.waxed().weathered()));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.COPPER_BLOCK.waxed().exposed()));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.COPPER_BLOCK.waxed().oxidized()));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CUT_COPPER.waxed().oxidized()));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CUT_COPPER.waxed().weathered()));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CUT_COPPER.waxed().exposed()));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CUT_COPPER.waxed().unaffected()));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CHISELED_COPPER.waxed().oxidized()));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CHISELED_COPPER.waxed().weathered()));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CHISELED_COPPER.waxed().exposed()));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.CHISELED_COPPER.waxed().unaffected()));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.COPPER_BULB.weathering().unaffected().defaultBlockState().setValue(CopperBulbBlock.LIT, true))); //TODO Do these even make sense?
+            registerMaterial(r, new BlockMicroMaterial(Blocks.COPPER_BULB.weathering().exposed().defaultBlockState().setValue(CopperBulbBlock.LIT, true)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.COPPER_BULB.weathering().weathered().defaultBlockState().setValue(CopperBulbBlock.LIT, true)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.COPPER_BULB.weathering().oxidized().defaultBlockState().setValue(CopperBulbBlock.LIT, true)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.COPPER_BULB.waxed().unaffected().defaultBlockState().setValue(CopperBulbBlock.LIT, true)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.COPPER_BULB.waxed().exposed().defaultBlockState().setValue(CopperBulbBlock.LIT, true)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.COPPER_BULB.waxed().weathered().defaultBlockState().setValue(CopperBulbBlock.LIT, true)));
+            registerMaterial(r, new BlockMicroMaterial(Blocks.COPPER_BULB.waxed().oxidized().defaultBlockState().setValue(CopperBulbBlock.LIT, true)));
             registerMaterial(r, new BlockMicroMaterial(Blocks.DRIPSTONE_BLOCK));
             registerMaterial(r, new BlockMicroMaterial(Blocks.ROOTED_DIRT));
             registerMaterial(r, new BlockMicroMaterial(Blocks.MUD));

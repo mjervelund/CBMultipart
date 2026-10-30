@@ -26,7 +26,7 @@ config="mixins.cbmultipart.json"
 [[dependencies.cb_multipart]]
     modId="minecraft"
     type="required"
-    versionRange="[1.21.11]"
+    versionRange="[${mc_version}]"
     ordering="NONE"
     side="BOTH"
 [[dependencies.cb_multipart]]
@@ -55,7 +55,7 @@ versionRange="[${forge_version},)"
 [[dependencies.cb_microblock]]
     modId="minecraft"
     type="required"
-versionRange="[1.21.11]"
+versionRange="[${mc_version}]"
     ordering="NONE"
     side="BOTH"
 [[dependencies.cb_microblock]]
@@ -90,7 +90,7 @@ versionRange="[1.21.11]"
 [[dependencies.cb_multipart_minecraft]]
     modId="minecraft"
     type="required"
-    versionRange="[1.21.11]"
+    versionRange="[${mc_version}]"
     ordering="NONE"
     side="BOTH"
 [[dependencies.cb_multipart_minecraft]]

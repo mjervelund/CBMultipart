@@ -1,9 +1,8 @@
 package codechicken.multipart.util;
 
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
+import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.Direction;
 import net.minecraft.util.TriState;
 import net.minecraft.world.level.block.state.BlockState;
@@ -14,12 +13,12 @@ import java.util.List;
 /**
  * Created by covers1624 on 7/18/26.
  */
-public class WrappedBlockModelPart implements BlockModelPart {
+public class WrappedBlockModelPart implements BlockStateModelPart {
 
-    private final BlockModelPart other;
+    private final BlockStateModelPart other;
     private final BlockState state;
 
-    public WrappedBlockModelPart(BlockModelPart other, BlockState state) {
+    public WrappedBlockModelPart(BlockStateModelPart other, BlockState state) {
         this.other = other;
         this.state = state;
     }
@@ -35,13 +34,13 @@ public class WrappedBlockModelPart implements BlockModelPart {
     }
 
     @Override
-    public TextureAtlasSprite particleIcon() {
-        return other.particleIcon();
+    public Material.Baked particleMaterial() {
+        return other.particleMaterial();
     }
 
     @Override
-    public ChunkSectionLayer getRenderType(BlockState state) {
-        return other.getRenderType(this.state);
+    public @BakedQuad.MaterialFlags int materialFlags() {
+        return other.materialFlags();
     }
 
     @Override

@@ -5,7 +5,7 @@ import codechicken.multipart.api.part.MultiPart;
 import codechicken.multipart.util.PartRayTraceResult;
 import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.state.LevelRenderState;
+import net.minecraft.client.renderer.state.level.LevelRenderState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.client.CustomBlockOutlineRenderer;

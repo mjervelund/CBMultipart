@@ -2,21 +2,23 @@ package codechicken.multipart.client;
 
 import codechicken.multipart.api.MultipartClientRegistry;
 import com.mojang.serialization.MapCodec;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.sprite.Material;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.model.DynamicBlockStateModel;
 import net.neoforged.neoforge.client.model.block.CustomUnbakedBlockStateModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static codechicken.multipart.CBMultipart.MOD_ID;
@@ -26,14 +28,14 @@ import static codechicken.multipart.CBMultipart.MOD_ID;
  */
 public class MultipartTileBakedModel implements DynamicBlockStateModel {
 
-    private final TextureAtlasSprite particle;
+    private final Material.Baked particle;
 
-    public MultipartTileBakedModel(TextureAtlasSprite particle) {
+    public MultipartTileBakedModel(Material.Baked particle) {
         this.particle = particle;
     }
 
     @Override
-    public void collectParts(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random, List<BlockModelPart> parts) {
+    public void collectParts(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random, List<BlockStateModelPart> parts) {
         var data = level.getModelData(pos);
         var tileData = data.get(MultipartModelData.DATA);
         if (tileData == null) return;
@@ -47,8 +49,24 @@ public class MultipartTileBakedModel implements DynamicBlockStateModel {
     }
 
     @Override
-    public TextureAtlasSprite particleIcon() {
+    public Material.Baked particleMaterial() {
         return particle;
+    }
+
+    @Override
+    public @BakedQuad.MaterialFlags int materialFlags() {
+        return 0;
+    }
+
+    @Override
+    public @BakedQuad.MaterialFlags int materialFlags(BlockAndTintGetter level, BlockPos pos, BlockState state) {
+        List<BlockStateModelPart> parts = new ArrayList<>();
+        collectParts(level, pos, state, RandomSource.create(42L), parts);
+        int flags = 0;
+        for (var part : parts) {
+            flags |= part.materialFlags();
+        }
+        return flags;
     }
 
     public static final class Unbaked implements CustomUnbakedBlockStateModel {
@@ -58,8 +76,8 @@ public class MultipartTileBakedModel implements DynamicBlockStateModel {
 
         @Override
         public BlockStateModel bake(ModelBaker baker) {
-            var missingSprite = baker.sprites().get(
-                    new Material(TextureAtlas.LOCATION_BLOCKS, MissingTextureAtlasSprite.getLocation()),
+            var missingSprite = baker.materials().get(
+                    new Material(MissingTextureAtlasSprite.getLocation()),
                     () -> "MultipartTileBakedModel.Unbaked"
             );
             return new MultipartTileBakedModel(missingSprite);
