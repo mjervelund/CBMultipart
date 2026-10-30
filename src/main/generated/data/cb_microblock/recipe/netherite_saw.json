@@ -1,6 +1,5 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
   "key": {
     "M": "#c:ingots/netherite",
     "R": "#c:rods/stone",
@@ -11,7 +10,6 @@
     "SMR"
   ],
   "result": {
-    "count": 1,
     "id": "cb_microblock:netherite_saw"
   }
 }

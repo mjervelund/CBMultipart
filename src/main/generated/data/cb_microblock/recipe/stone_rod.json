@@ -1,6 +1,5 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
   "key": {
     "S": "#c:cobblestones"
   },
@@ -9,7 +8,6 @@
     "S"
   ],
   "result": {
-    "count": 1,
     "id": "cb_microblock:stone_rod"
   }
 }

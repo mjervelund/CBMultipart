@@ -42,8 +42,14 @@ neoForge {
             server()
         }
         data {
-            data()
+            clientData()
             programArguments.addAll '--mod', 'cb_multipart', '--mod', 'cb_microblock', '--all', '--flat', '--output', file("src/main/generated").absolutePath, '--existing', file("src/main/resources").absolutePath
+        }
+    }
+
+    mods {
+        cb_multipart {
+            sourceSet sourceSets.main
         }
     }
 }
