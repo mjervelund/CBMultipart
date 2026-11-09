@@ -615,14 +615,19 @@ public class TileMultipart extends BlockEntity implements IChunkLoadTile {
         }
     }
 
+    /**
+     * Updates this block's light emission and re-checks lighting at its position.
+     * <p>
+     * The check goes through {@link LevelLightEngine#checkBlock}: on the server that is the
+     * ThreadedLevelLightEngine, which queues it onto the light thread. Calling the sky/block
+     * {@code LightEngine}s directly from the server thread races the light worker and corrupts
+     * its queues. The vanilla check covers both layers, so {@code sky} and {@code block} only
+     * decide whether a check is needed at all.
+     */
     public void recalcLight(boolean sky, boolean block) {
         updateLight();
-        LevelLightEngine lm = level.getLightEngine();
-        if (sky && lm.skyEngine != null) {
-            lm.skyEngine.checkBlock(worldPosition);
-        }
-        if (block && lm.blockEngine != null) {
-            lm.blockEngine.checkBlock(worldPosition);
+        if (sky || block) {
+            level.getLightEngine().checkBlock(worldPosition);
         }
     }
 
