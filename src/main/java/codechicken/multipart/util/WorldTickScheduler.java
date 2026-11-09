@@ -114,12 +114,14 @@ class WorldTickScheduler extends SavedData {
 
     public void onChunkUnload(LevelChunk chunk) {
         ChunkPos pos = chunk.getPos();
-        ticking.removeIf(e -> {
-            if (!e.pos.equals(pos)) return false;
+        // Look the scheduler up by position: one that is not ticking (all its ticks fired, or it is still in
+        // tickingPending) must forget its chunk too, or the next load of this chunk throws "Chunk already loaded?".
+        ChunkScheduler scheduler = chunks.get(pos);
+        if (scheduler == null) return;
 
-            e.onChunkUnload();
-            return true;
-        });
+        ticking.remove(scheduler);
+        tickingPending.remove(scheduler);
+        scheduler.onChunkUnload();
     }
 
     public void onChunkLoad(LevelChunk chunk) {
@@ -220,6 +222,24 @@ class WorldTickScheduler extends SavedData {
         }
 
         private void onChunkUnload() {
+            // The parts in this chunk are discarded with it. Keep pending scheduled ticks as saved entries, which
+            // onChunkLoad resolves against the reloaded tiles; random ticks are registered again by the parts on load.
+            for (PartTickEntry entry : scheduledTicks) {
+                SavedTickEntry saved = entry.save();
+                if (saved != null) {
+                    savedTicks.add(saved);
+                }
+            }
+            for (PartTickEntry entry : pendingScheduled) {
+                SavedTickEntry saved = entry.save();
+                if (saved != null) {
+                    savedTicks.add(saved);
+                }
+            }
+            scheduledTicks.clear();
+            pendingScheduled.clear();
+            randomTicks.clear();
+            pendingRandom.clear();
             chunk = null;
         }
 
