@@ -70,6 +70,8 @@ public class MicroRecipe extends CustomRecipe {
 
         MicroMaterialComponent materialComponent = MicroMaterialComponent.getComponent(first);
         if (materialComponent == null) return ItemStack.EMPTY;
+        // Only covers become hollow covers 1:1; 8 nooks or strips are worth less than 8 covers.
+        if (materialComponent.factoryId() != 0) return ItemStack.EMPTY;
 
         for (int x = 0; x < 3; x++) {
             for (int y = 0; y < 3; y++) {
@@ -126,7 +128,8 @@ public class MicroRecipe extends CustomRecipe {
             case 3 -> count == 2 ? create(1, 0, smallest, material) : ItemStack.EMPTY;
             case 2 -> switch (count) {
                 case 2 -> create(1, 3, smallest, material);
-                case 3 -> create(1, 0, smallest, material);
+                // A cover splits into 2 strips and each strip into 2 nooks, so a cover takes 4 nooks.
+                case 4 -> create(1, 0, smallest, material);
                 default -> ItemStack.EMPTY;
             };
             case 1, 0 -> {
