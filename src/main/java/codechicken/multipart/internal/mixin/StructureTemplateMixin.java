@@ -38,6 +38,10 @@ abstract class StructureTemplateMixin {
         var tile = TileMultipart.fromNBT(input, instance.getBlockPos());
         if (tile != null) {
             MultipartHelper.silentAddTile(instance.getLevel(), instance.getBlockPos(), tile);
+            // silentAddTile does not register the tile as fresh, so onLoad (which publishes the light) never runs.
+            if (tile.getLevel() != null && !tile.getLevel().isClientSide()) {
+                tile.updateLight();
+            }
             MultiPartNetwork.sendDescUpdate(tile);
         }
     }
