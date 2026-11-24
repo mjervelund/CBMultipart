@@ -438,6 +438,20 @@ public class TileMultipart extends BlockEntity implements IChunkLoadTile {
         operate(MultiPart::onChunkUnload);
     }
 
+    /**
+     * A tile built from NBT ({@link #fromNBT}: chunk load, and {@code /setblock}, {@code /clone} etc. through
+     * {@link codechicken.multipart.util.MultipartLoadHandler.TileNBTContainer}) loads its parts while it has no
+     * level, so {@link #updateLight()} never ran and its light-emitting parts stayed dark. Publish the light once
+     * the tile is in the level (a no-op when the chunk's saved value already matches).
+     */
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        if (level != null && !level.isClientSide()) {
+            updateLight();
+        }
+    }
+
     @Override
     public void onChunkLoad(LevelChunk chunk) {
         operate(e -> e.onChunkLoad(chunk));
