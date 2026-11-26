@@ -10,6 +10,8 @@ config="mixins.cbmultipart.json"
 [[mods]]
     modId="cb_multipart"
     displayName="CBMultipart"
+    iconFile="icons/cb_multipart.png"
+    iconBlur=false
     version="${file.jarVersion}"
 
     updateJSONURL="https://version-check.covers1624.net/check/?mod=CBMultipart&mc=${mc_version}"
@@ -40,6 +42,8 @@ config="mixins.cbmultipart.json"
 [[mods]]
     modId="cb_microblock"
     displayName="CBMicroblock"
+    iconFile="icons/cb_microblock.png"
+    iconBlur=false
     version="${file.jarVersion}"
 
     displayURL="https://github.com/TheCBProject/CBMultipart"
@@ -75,6 +79,8 @@ versionRange="[${mc_version}]"
 [[mods]]
     modId="cb_multipart_minecraft"
     displayName="CBMultipart Minecraft"
+    iconFile="minecraft:textures/block/redstone_torch.png"
+    iconBlur=false
     version="${file.jarVersion}"
 
     displayURL="https://github.com/TheCBProject/CBMultipart"
